@@ -14,6 +14,17 @@ const App = () => {
   ];
   const [query, setQuery] = useState('');
   const [result, setResult] = useState([]);
+
+  const debounce = (func, delay) => {
+    let timer;
+    return (...args) => {
+      if(timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    }
+  }
+
   const searchMovies = (e) => {
     setQuery(e.target.value);
     const searchQuery = e.target.value;
@@ -28,9 +39,13 @@ const App = () => {
       return el.title.toLowerCase().includes(searchQuery);
     })]);
   }
+
+  const debounceSearch = debounce(searchMovies, 1000);
+
+
   return (
     <div className="main-container">
-      <input type='text' className='debounce' onChange={searchMovies}/>
+      <input type='text' className='debounce' onChange={debounceSearch}/>
       {result.length > 0 ? result.map((el) => {
           return (
             <div key={el.id}>
